@@ -150,6 +150,34 @@ npm run build
 
 Output is in the `dist/` directory.
 
+## CI/CD Pipeline
+
+### Continuous Integration (GitHub Actions)
+
+Every push to `main` and every pull request automatically runs a CI workflow defined in `.github/workflows/ci.yml`. It spins up a fresh Linux environment, installs dependencies, and runs:
+
+1. **Lint** — ESLint checks for code quality issues
+2. **Build** — TypeScript type checking + Vite production build
+
+If either step fails, GitHub marks the commit with a red X and the failure is visible in the **Actions** tab of the repo. This catches broken code before it reaches the live site.
+
+The build step requires your environment variables to be present. These are stored as **GitHub Secrets** (`Settings → Secrets and variables → Actions`) so they are never exposed in the workflow file:
+- `VITE_BUNGIE_API_KEY`
+- `VITE_BUNGIE_CLIENT_ID`
+- `VITE_REDIRECT_URI`
+
+### Continuous Deployment (Vercel)
+
+The app is hosted on [Vercel](https://vercel.com). Vercel watches the `main` branch and automatically deploys on every push — no manual steps required. Environment variables are configured separately in the Vercel dashboard so the production build has access to them at build time.
+
+The full flow on every push to `main`:
+```
+Push to main
+  → GitHub Actions runs lint + build (CI)
+  → Vercel detects the push and deploys to production (CD)
+  → Live site updates automatically
+```
+
 ## How the Manifest Works
 
 The Destiny 2 manifest is a large database of item definitions, perk descriptions, stat names, and more. Transmat downloads it on first load and caches it in IndexedDB so it doesn't need to be re-downloaded on every visit. When Bungie publishes an update, the manifest version changes and the cache is automatically invalidated and refreshed.

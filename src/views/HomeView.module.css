@@ -1,0 +1,45 @@
+.loginPage {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loginPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px 64px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+}
+
+.loginLogo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.loginLogoSymbol {
+    font-size: 32px;
+    color: var(--accent);
+    text-shadow: var(--accent-glow);
+}
+
+.loginLogoText {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--text-h);
+}
+
+.loginTagline {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text);
+    margin: 0 0 8px;
+}

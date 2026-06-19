@@ -15,6 +15,7 @@ import {
 } from "../types/bungie.types";
 import type { DestinyItem } from "../types/bungie.types";
 import { useState } from "react";
+import styles from "./InventoryView.module.css";
 
 export function InventoryView() {
     useCharacters()
@@ -115,15 +116,15 @@ export function InventoryView() {
     }
 
     return (
-        <div className="inv-page">
-            <div className="inv-header">
-                <p className="inv-title">Transmat</p>
-                <button className="btn-logout" onClick={handleLogout}>Logout</button>
+        <div className={styles.page}>
+            <div className={styles.header}>
+                <p className={styles.title}>Transmat</p>
+                <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
             </div>
-            <div className="inv-characters">
+            <div className={styles.characters}>
                 {isLoading ? (
                     Array.from({ length: 3 }, (_, i) => (
-                        <div key={i} className="inv-character-panel">
+                        <div key={i} className={styles.characterPanel}>
                             <div className="skeleton skeleton-header" />
                             {Array.from({ length: 8 }, (_, j) => (
                                 <div key={j} className="inv-section">
@@ -160,14 +161,14 @@ export function InventoryView() {
                         const charClassItem = charInventory.filter(item => item.bucketHash === bucketHashes.classItem)
 
                         return (
-                            <div key={characterId} className="inv-character-panel">
-                                <div className="inv-character-header" style={{ backgroundImage: `url(https://www.bungie.net${character?.emblemBackgroundPath})` }}>
-                                    <div className="inv-character-header-overlay">
-                                        <div className="inv-character-info">
-                                            <span className="inv-character-name">{className}</span>
-                                            <span className="inv-character-title">{characterTitle}</span>
+                            <div key={characterId} className={styles.characterPanel}>
+                                <div className={styles.characterHeader} style={{ backgroundImage: `url(https://www.bungie.net${character?.emblemBackgroundPath})` }}>
+                                    <div className={styles.characterHeaderOverlay}>
+                                        <div className={styles.characterInfo}>
+                                            <span className={styles.characterName}>{className}</span>
+                                            <span className={styles.characterTitle}>{characterTitle}</span>
                                         </div>
-                                        <span className="inv-character-power">◆ {character?.light}</span>
+                                        <span className={styles.characterPower}>◆ {character?.light}</span>
                                     </div>
                                 </div>
                                 <div className="inv-section">
@@ -180,17 +181,16 @@ export function InventoryView() {
                                             const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
                                             const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
                                             return (
-                                                <div key={item.itemInstanceId} className={`inv-item inv-item-equipped${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}
-                                                >
+                                                <div key={item.itemInstanceId} className={`inv-item inv-item-equipped${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
                                                     <img src={iconUrl} alt={itemName} />
                                                     {(() => {
                                                         const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
                                                         if (!gearTier) return null
                                                         return (
                                                             <div className="inv-item-tier">
-                                                                {gearTier ? Array.from({ length: 5 }, (_, i) => (
+                                                                {Array.from({ length: 5 }, (_, i) => (
                                                                     <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
-                                                                )) : null}
+                                                                ))}
                                                             </div>
                                                         )
                                                     })()}
@@ -211,8 +211,7 @@ export function InventoryView() {
                                                 const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
                                                 const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
                                                 return (
-                                                    <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}
-                                                    >
+                                                    <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
                                                         <img src={iconUrl} alt={itemName} />
                                                         {(() => {
                                                             const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
@@ -318,29 +317,29 @@ export function InventoryView() {
                 )}
             </div>
 
-            <div className="inv-vault">
+            <div className={styles.vault}>
                 <h2>Vault</h2>
-                <div className="vault-controls">
+                <div className={styles.vaultControls}>
                     <input
-                        className="vault-search"
+                        className={styles.vaultSearch}
                         type="text"
                         placeholder="Search vault..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
-                    <select className="vault-sort" value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}>
+                    <select className={styles.vaultSort} value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}>
                         <option value="power-desc">Power ↓</option>
                         <option value="power-asc">Power ↑</option>
                         <option value="name">Name A–Z</option>
                     </select>
-                    <select className="vault-sort" value={filterElement ?? ''} onChange={e => setFilterElement(e.target.value ? Number(e.target.value) : null)}>
+                    <select className={styles.vaultSort} value={filterElement ?? ''} onChange={e => setFilterElement(e.target.value ? Number(e.target.value) : null)}>
                         <option value="">All Elements</option>
                         {Object.entries(damageTypes).map(([key, name]) => (
                             <option key={key} value={key}>{name}</option>
                         ))}
                     </select>
                     <select
-                        className="vault-sort"
+                        className={styles.vaultSort}
                         value={filterChampion}
                         onChange={e => setFilterChampion(e.target.value)}
                     >
@@ -350,7 +349,7 @@ export function InventoryView() {
                         <option value="anti-barrier">Barrier</option>
                     </select>
                     <button
-                        className={`vault-filter-btn${filterExotic ? ' active exotic' : ''}`}
+                        className={`${styles.vaultFilterBtn}${filterExotic ? ` ${styles.active} ${styles.exotic}` : ''}`}
                         onClick={(e) => {
                             (e.currentTarget as HTMLButtonElement).blur()
                             setFilterExotic(f => !f)
@@ -359,7 +358,7 @@ export function InventoryView() {
                         Exotic
                     </button>
                     <button
-                        className={`vault-filter-btn${filterMasterwork ? ' active' : ''}`}
+                        className={`${styles.vaultFilterBtn}${filterMasterwork ? ` ${styles.active}` : ''}`}
                         onClick={(e) => {
                             (e.currentTarget as HTMLButtonElement).blur()
                             setFilterMasterwork(f => !f)
@@ -368,7 +367,7 @@ export function InventoryView() {
                         ◆ Masterwork
                     </button>
                     <button
-                        className="vault-filter-btn"
+                        className={styles.vaultFilterBtn}
                         onClick={(e) => {
                             (e.currentTarget as HTMLButtonElement).blur()
                             setSearchQuery('')
@@ -382,13 +381,12 @@ export function InventoryView() {
                     >
                         ✕ Reset
                     </button>
-
                 </div>
-                <div className="vault-chips">
+                <div className={styles.vaultChips}>
                     {Object.entries(weaponSubTypes).map(([key, name]) => (
                         <button
                             key={key}
-                            className={`vault-chip${filterWeaponType === Number(key) ? ' active' : ''}`}
+                            className={`${styles.vaultChip}${filterWeaponType === Number(key) ? ` ${styles.active}` : ''}`}
                             onClick={(e) => {
                                 (e.currentTarget as HTMLButtonElement).blur()
                                 setFilterWeaponType(filterWeaponType === Number(key) ? null : Number(key))
@@ -398,7 +396,6 @@ export function InventoryView() {
                         </button>
                     ))}
                 </div>
-
 
                 {([
                     { label: "Kinetic", inv: vaultKinetic },
@@ -483,7 +480,6 @@ export function InventoryView() {
                     onClose={() => setSelectedItem(null)}
                 />
             )}
-        </div >
+        </div>
     )
-
 }

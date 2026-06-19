@@ -19,6 +19,7 @@ import { createPortal } from "react-dom"
 import { useCharacterStore } from '../store/characterStore'
 import { useInventoryStore } from '../store/inventoryStore'
 import { transferItem, equipItem } from '../services/bungieApi'
+import styles from './ItemModal.module.css'
 
 
 interface ItemModalProps {
@@ -147,28 +148,28 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
     }
 
     return (
-        <div className="item-modal-backdrop" onClick={onClose}>
-            <div className="item-modal" onClick={e => e.stopPropagation()}>
+        <div className={styles.backdrop} onClick={onClose}>
+            <div className={styles.modal} onClick={e => e.stopPropagation()}>
 
-                <div className="item-modal-header">
-                    <div className="item-modal-header-left">
-                        {icon && <img className="item-modal-icon" src={`https://www.bungie.net${icon}`} alt={name} />}
-                        <div className="item-modal-title">
-                            <span className={`item-modal-name${isMasterwork ? ' item-modal-name-masterwork' : ''}`}>{name}</span>
-                            {subTypeName && <span className="item-modal-type">{subTypeName}</span>}
-                            <div className="item-modal-meta">
-                                {power && <span className="item-modal-power">◆ {power}</span>}
-                                {damageType && <span className={`item-modal-element element-${damageType.toLowerCase()}`}>{damageType}</span>}
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
+                        {icon && <img className={styles.icon} src={`https://www.bungie.net${icon}`} alt={name} />}
+                        <div className={styles.title}>
+                            <span className={`${styles.name}${isMasterwork ? ` ${styles.nameMasterwork}` : ''}`}>{name}</span>
+                            {subTypeName && <span className={styles.type}>{subTypeName}</span>}
+                            <div className={styles.meta}>
+                                {power && <span className={styles.power}>◆ {power}</span>}
+                                {damageType && <span className={`${styles.element} element-${damageType.toLowerCase()}`}>{damageType}</span>}
                             </div>
                         </div>
                     </div>
-                    <button className="item-modal-close" onClick={onClose}>✕</button>
+                    <button className={styles.close} onClick={onClose}>✕</button>
                 </div>
 
-                <div className="item-modal-body">
-                    <div className="item-modal-left">
+                <div className={styles.body}>
+                    <div className={styles.left}>
                         {itemStatEntries.length > 0 && (
-                            <div className="item-modal-stats">
+                            <div className={styles.stats}>
                                 {itemStatEntries.map(({ hash, name, value }) => (
                                     <div key={hash} className="item-tooltip-stat">
                                         <span className="item-tooltip-stat-name">{name}</span>
@@ -248,15 +249,15 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                         {description && <p className="item-tooltip-flavor">{description}</p>}
                     </div>
 
-                    <div className="item-modal-destinations">
+                    <div className={styles.destinations}>
                         {characters && Object.entries(characters).map(([charId, char]) => (
-                            <div key={charId} className="item-modal-destination">
+                            <div key={charId} className={styles.destination}>
                                 <img
-                                    className="item-modal-char-emblem"
+                                    className={styles.charEmblem}
                                     src={`https://www.bungie.net${char.emblemBackgroundPath}`}
                                     alt={classNames[char.classType]}
                                 />
-                                <span className="item-modal-char-name">{classNames[char.classType]}</span>
+                                <span className={styles.charName}>{classNames[char.classType]}</span>
                                 {(() => {
                                     const bucketHash = itemDef.inventory.bucketTypeHash
                                     const inv = characterInventory?.[charId] ?? []
@@ -265,11 +266,11 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                         return def?.inventory.bucketTypeHash === bucketHash
                                     })
                                     return (
-                                        <div className="item-modal-slot-grid">
+                                        <div className={styles.slotGrid}>
                                             {Array.from({ length: 9 }, (_, i) => {
                                                 const slotItem = bucketItems[i]
                                                 const slotDef = slotItem ? manifestData?.[String(slotItem.itemHash)] : undefined
-                                                if (!slotDef?.displayProperties.icon) return <div key={i} className="item-modal-slot" />
+                                                if (!slotDef?.displayProperties.icon) return <div key={i} className={styles.slot} />
                                                 const slotInstance = itemInstances?.[slotItem.itemInstanceId]
                                                 const slotPower = slotInstance?.primaryStat?.value
                                                 const slotGearTier = slotInstance?.gearTier
@@ -278,7 +279,7 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                                 return (
                                                     <div
                                                         key={i}
-                                                        className={`item-modal-slot${slotMW ? ' inv-item-masterwork' : ''}`}
+                                                        className={`${styles.slot}${slotMW ? ' inv-item-masterwork' : ''}`}
                                                         onMouseEnter={(e) => {
                                                             const rect = e.currentTarget.getBoundingClientRect()
                                                             setSlotTooltip({ text: slotName, x: rect.left + rect.width / 2, y: rect.top })
@@ -286,7 +287,7 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                                         onMouseLeave={() => setSlotTooltip(null)}
                                                     >
                                                         <img
-                                                            className="item-modal-slot-filled"
+                                                            className={styles.slotFilled}
                                                             src={`https://www.bungie.net${slotDef.displayProperties.icon}`}
                                                             alt={slotName}
                                                         />
@@ -304,16 +305,16 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                         </div>
                                     )
                                 })()}
-                                <div className="item-modal-destination-actions">
+                                <div className={styles.destinationActions}>
                                     <button
-                                        className="item-modal-action-btn"
+                                        className={styles.actionBtn}
                                         onClick={() => handleTransfer(charId)}
                                         disabled={transferring !== null}
                                     >
                                         {transferring === `transfer-${charId}` ? '...' : 'Transfer'}
                                     </button>
                                     <button
-                                        className="item-modal-action-btn"
+                                        className={styles.actionBtn}
                                         onClick={() => handleEquip(charId)}
                                         disabled={transferring !== null}
                                     >
@@ -322,12 +323,12 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                 </div>
                             </div>
                         ))}
-                        <div className="item-modal-destination">
-                            <div className="item-modal-vault-emblem">◈</div>
-                            <span className="item-modal-char-name">Vault</span>
-                            <div className="item-modal-destination-actions">
+                        <div className={styles.destination}>
+                            <div className={styles.vaultEmblem}>◈</div>
+                            <span className={styles.charName}>Vault</span>
+                            <div className={styles.destinationActions}>
                                 <button
-                                    className="item-modal-action-btn"
+                                    className={styles.actionBtn}
                                     onClick={async () => {
                                         if (!membershipType) return
                                         const loc = findItemLocation(item.itemInstanceId)
@@ -346,7 +347,6 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                 >
                                     {transferring === 'transfer-vault' ? '...' : 'Transfer'}
                                 </button>
-
                             </div>
                         </div>
                     </div>

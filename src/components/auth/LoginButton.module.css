@@ -1,0 +1,17 @@
+.loginBtn {
+    padding: 10px 32px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.loginBtn:hover {
+    background: var(--accent-dim);
+    box-shadow: var(--accent-glow);
+}

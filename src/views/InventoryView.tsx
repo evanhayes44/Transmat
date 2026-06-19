@@ -29,7 +29,8 @@ export function InventoryView() {
         itemInstances,
         itemStats,
         itemSockets,
-        itemPlugObjectives
+        itemPlugObjectives,
+        isLoading
     } = useInventoryStore()
 
     const { data: manifestData, titleData } = useManifestStore()
@@ -120,77 +121,66 @@ export function InventoryView() {
                 <button className="btn-logout" onClick={handleLogout}>Logout</button>
             </div>
             <div className="inv-characters">
-                {items && Object.entries(items).map(([characterId, itemArray]) => {
-                    const character = characters?.[characterId]
-                    const className = character ? classNames[character.classType] : characterId
-
-                    const genderKey = character?.genderType === 1 ? "Female" : "Male"
-                    const characterTitle = titleData?.[String(character?.titleRecordHash)]?.titleInfo?.titlesByGender?.[genderKey]
-
-                    const charInventory = characterInventory?.[characterId] ?? []
-
-                    const charKinetic = charInventory.filter(item => item.bucketHash === bucketHashes.kinetic)
-                    const charEnergy = charInventory.filter(item => item.bucketHash === bucketHashes.energy)
-                    const charPower = charInventory.filter(item => item.bucketHash === bucketHashes.power)
-                    const charHelmet = charInventory.filter(item => item.bucketHash === bucketHashes.helmet)
-                    const charGauntlets = charInventory.filter(item => item.bucketHash === bucketHashes.gauntlets)
-                    const charChest = charInventory.filter(item => item.bucketHash === bucketHashes.chest)
-                    const charLegs = charInventory.filter(item => item.bucketHash === bucketHashes.legs)
-                    const charClassItem = charInventory.filter(item => item.bucketHash === bucketHashes.classItem)
-
-                    return (
-                        <div key={characterId} className="inv-character-panel">
-                            <div className="inv-character-header" style={{ backgroundImage: `url(https://www.bungie.net${character?.emblemBackgroundPath})` }}>
-                                <div className="inv-character-header-overlay">
-                                    <div className="inv-character-info">
-                                        <span className="inv-character-name">{className}</span>
-                                        <span className="inv-character-title">{characterTitle}</span>
+                {isLoading ? (
+                    Array.from({ length: 3 }, (_, i) => (
+                        <div key={i} className="inv-character-panel">
+                            <div className="skeleton skeleton-header" />
+                            {Array.from({ length: 8 }, (_, j) => (
+                                <div key={j} className="inv-section">
+                                    <div className="skeleton skeleton-text" />
+                                    <div className="inv-slot">
+                                        <div className="skeleton skeleton-item" />
+                                        <div className="inv-slot-grid">
+                                            {Array.from({ length: 9 }, (_, k) => (
+                                                <div key={k} className="skeleton skeleton-item" />
+                                            ))}
+                                        </div>
                                     </div>
-                                    <span className="inv-character-power">◆ {character?.light}</span>
                                 </div>
-                            </div>
-                            <div className="inv-section">
-                                <p className="inv-section-label">Kinetic</p>
-                                <div className="inv-slot">
-                                    {(() => {
-                                        const item = itemArray.find(i => i.bucketHash === bucketHashes.kinetic)
-                                        if (!item) return <div className="inv-item-empty" />
-                                        const itemDef = manifestData?.[String(item.itemHash)]
-                                        const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
-                                        const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
-                                        return (
-                                            <div key={item.itemInstanceId} className={`inv-item inv-item-equipped${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}
-                                            >
-                                                <img src={iconUrl} alt={itemName} />
-                                                {(() => {
-                                                    const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
-                                                    if (!gearTier) return null
-                                                    return (
-                                                        <div className="inv-item-tier">
-                                                            {gearTier ? Array.from({ length: 5 }, (_, i) => (
-                                                                <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
-                                                            )) : null}
-                                                        </div>
-                                                    )
-                                                })()}
-                                                {(() => {
-                                                    const power = itemInstances?.[item.itemInstanceId]?.primaryStat?.value
-                                                    if (!power) return null
-                                                    return <span className="inv-item-power">{power}</span>
-                                                })()}
-                                                <div className="inv-item-tooltip">{itemName}</div>
-                                            </div>
-                                        )
-                                    })()}
-                                    <div className="inv-slot-grid">
-                                        {Array.from({ length: 9 }, (_, i) => {
-                                            const item = charKinetic[i]
-                                            if (!item) return <div key={i} className="inv-item-empty" />
+                            ))}
+                        </div>
+                    ))
+                ) : (
+                    items && Object.entries(items).map(([characterId, itemArray]) => {
+                        const character = characters?.[characterId]
+                        const className = character ? classNames[character.classType] : characterId
+
+                        const genderKey = character?.genderType === 1 ? "Female" : "Male"
+                        const characterTitle = titleData?.[String(character?.titleRecordHash)]?.titleInfo?.titlesByGender?.[genderKey]
+
+                        const charInventory = characterInventory?.[characterId] ?? []
+
+                        const charKinetic = charInventory.filter(item => item.bucketHash === bucketHashes.kinetic)
+                        const charEnergy = charInventory.filter(item => item.bucketHash === bucketHashes.energy)
+                        const charPower = charInventory.filter(item => item.bucketHash === bucketHashes.power)
+                        const charHelmet = charInventory.filter(item => item.bucketHash === bucketHashes.helmet)
+                        const charGauntlets = charInventory.filter(item => item.bucketHash === bucketHashes.gauntlets)
+                        const charChest = charInventory.filter(item => item.bucketHash === bucketHashes.chest)
+                        const charLegs = charInventory.filter(item => item.bucketHash === bucketHashes.legs)
+                        const charClassItem = charInventory.filter(item => item.bucketHash === bucketHashes.classItem)
+
+                        return (
+                            <div key={characterId} className="inv-character-panel">
+                                <div className="inv-character-header" style={{ backgroundImage: `url(https://www.bungie.net${character?.emblemBackgroundPath})` }}>
+                                    <div className="inv-character-header-overlay">
+                                        <div className="inv-character-info">
+                                            <span className="inv-character-name">{className}</span>
+                                            <span className="inv-character-title">{characterTitle}</span>
+                                        </div>
+                                        <span className="inv-character-power">◆ {character?.light}</span>
+                                    </div>
+                                </div>
+                                <div className="inv-section">
+                                    <p className="inv-section-label">Kinetic</p>
+                                    <div className="inv-slot">
+                                        {(() => {
+                                            const item = itemArray.find(i => i.bucketHash === bucketHashes.kinetic)
+                                            if (!item) return <div className="inv-item-empty" />
                                             const itemDef = manifestData?.[String(item.itemHash)]
                                             const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
                                             const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
                                             return (
-                                                <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}
+                                                <div key={item.itemInstanceId} className={`inv-item inv-item-equipped${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}
                                                 >
                                                     <img src={iconUrl} alt={itemName} />
                                                     {(() => {
@@ -198,53 +188,9 @@ export function InventoryView() {
                                                         if (!gearTier) return null
                                                         return (
                                                             <div className="inv-item-tier">
-                                                                {Array.from({ length: 5 }, (_, i) => (
+                                                                {gearTier ? Array.from({ length: 5 }, (_, i) => (
                                                                     <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
-                                                                ))}
-                                                            </div>
-                                                        )
-                                                    })()}
-                                                    {(() => {
-                                                        const power = itemInstances?.[item.itemInstanceId]?.primaryStat?.value
-                                                        if (!power) return null
-                                                        return <span className="inv-item-power">{power}</span>
-                                                    })()}
-                                                    <div className="inv-item-tooltip">{itemName}</div>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                            {([
-                                { label: "Energy", bucket: bucketHashes.energy, inv: charEnergy },
-                                { label: "Power", bucket: bucketHashes.power, inv: charPower },
-                                { label: "Helmet", bucket: bucketHashes.helmet, inv: charHelmet },
-                                { label: "Gauntlets", bucket: bucketHashes.gauntlets, inv: charGauntlets },
-                                { label: "Chest", bucket: bucketHashes.chest, inv: charChest },
-                                { label: "Legs", bucket: bucketHashes.legs, inv: charLegs },
-                                { label: "Class Item", bucket: bucketHashes.classItem, inv: charClassItem },
-                            ] as const).map(({ label, bucket, inv }) => (
-                                <div key={label} className="inv-section">
-                                    <p className="inv-section-label">{label}</p>
-                                    <div className="inv-slot">
-                                        {(() => {
-                                            const item = itemArray.find(i => i.bucketHash === bucket)
-                                            if (!item) return <div className="inv-item-empty" />
-                                            const itemDef = manifestData?.[String(item.itemHash)]
-                                            const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
-                                            const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
-                                            return (
-                                                <div key={item.itemInstanceId} className={`inv-item inv-item-equipped${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
-                                                    <img src={iconUrl} alt={itemName} />
-                                                    {(() => {
-                                                        const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
-                                                        if (!gearTier) return null
-                                                        return (
-                                                            <div className="inv-item-tier">
-                                                                {Array.from({ length: 5 }, (_, i) => (
-                                                                    <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
-                                                                ))}
+                                                                )) : null}
                                                             </div>
                                                         )
                                                     })()}
@@ -259,13 +205,14 @@ export function InventoryView() {
                                         })()}
                                         <div className="inv-slot-grid">
                                             {Array.from({ length: 9 }, (_, i) => {
-                                                const item = inv[i]
+                                                const item = charKinetic[i]
                                                 if (!item) return <div key={i} className="inv-item-empty" />
                                                 const itemDef = manifestData?.[String(item.itemHash)]
                                                 const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
                                                 const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
                                                 return (
-                                                    <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
+                                                    <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}
+                                                    >
                                                         <img src={iconUrl} alt={itemName} />
                                                         {(() => {
                                                             const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
@@ -290,10 +237,85 @@ export function InventoryView() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )
-                })}
+                                {([
+                                    { label: "Energy", bucket: bucketHashes.energy, inv: charEnergy },
+                                    { label: "Power", bucket: bucketHashes.power, inv: charPower },
+                                    { label: "Helmet", bucket: bucketHashes.helmet, inv: charHelmet },
+                                    { label: "Gauntlets", bucket: bucketHashes.gauntlets, inv: charGauntlets },
+                                    { label: "Chest", bucket: bucketHashes.chest, inv: charChest },
+                                    { label: "Legs", bucket: bucketHashes.legs, inv: charLegs },
+                                    { label: "Class Item", bucket: bucketHashes.classItem, inv: charClassItem },
+                                ] as const).map(({ label, bucket, inv }) => (
+                                    <div key={label} className="inv-section">
+                                        <p className="inv-section-label">{label}</p>
+                                        <div className="inv-slot">
+                                            {(() => {
+                                                const item = itemArray.find(i => i.bucketHash === bucket)
+                                                if (!item) return <div className="inv-item-empty" />
+                                                const itemDef = manifestData?.[String(item.itemHash)]
+                                                const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
+                                                const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
+                                                return (
+                                                    <div key={item.itemInstanceId} className={`inv-item inv-item-equipped${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
+                                                        <img src={iconUrl} alt={itemName} />
+                                                        {(() => {
+                                                            const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
+                                                            if (!gearTier) return null
+                                                            return (
+                                                                <div className="inv-item-tier">
+                                                                    {Array.from({ length: 5 }, (_, i) => (
+                                                                        <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
+                                                                    ))}
+                                                                </div>
+                                                            )
+                                                        })()}
+                                                        {(() => {
+                                                            const power = itemInstances?.[item.itemInstanceId]?.primaryStat?.value
+                                                            if (!power) return null
+                                                            return <span className="inv-item-power">{power}</span>
+                                                        })()}
+                                                        <div className="inv-item-tooltip">{itemName}</div>
+                                                    </div>
+                                                )
+                                            })()}
+                                            <div className="inv-slot-grid">
+                                                {Array.from({ length: 9 }, (_, i) => {
+                                                    const item = inv[i]
+                                                    if (!item) return <div key={i} className="inv-item-empty" />
+                                                    const itemDef = manifestData?.[String(item.itemHash)]
+                                                    const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
+                                                    const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
+                                                    return (
+                                                        <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
+                                                            <img src={iconUrl} alt={itemName} />
+                                                            {(() => {
+                                                                const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
+                                                                if (!gearTier) return null
+                                                                return (
+                                                                    <div className="inv-item-tier">
+                                                                        {Array.from({ length: 5 }, (_, i) => (
+                                                                            <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
+                                                                        ))}
+                                                                    </div>
+                                                                )
+                                                            })()}
+                                                            {(() => {
+                                                                const power = itemInstances?.[item.itemInstanceId]?.primaryStat?.value
+                                                                if (!power) return null
+                                                                return <span className="inv-item-power">{power}</span>
+                                                            })()}
+                                                            <div className="inv-item-tooltip">{itemName}</div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    })
+                )}
             </div>
 
             <div className="inv-vault">
@@ -391,33 +413,38 @@ export function InventoryView() {
                     <div key={label} className="inv-section">
                         <p className="inv-section-label">{label}</p>
                         <div className="inv-item-list">
-                            {inv.map((item) => {
-                                const itemDef = manifestData?.[String(item.itemHash)]
-                                const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
-                                const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
-                                return (
-                                    <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
-                                        <img src={iconUrl} alt={itemName} />
-                                        {(() => {
-                                            const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
-                                            if (!gearTier) return null
-                                            return (
-                                                <div className="inv-item-tier">
-                                                    {Array.from({ length: 5 }, (_, i) => (
-                                                        <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
-                                                    ))}
-                                                </div>
-                                            )
-                                        })()}
-                                        {(() => {
-                                            const power = itemInstances?.[item.itemInstanceId]?.primaryStat?.value
-                                            if (!power) return null
-                                            return <span className="inv-item-power">{power}</span>
-                                        })()}
-                                        <div className="inv-item-tooltip">{itemName}</div>
-                                    </div>
-                                )
-                            })}
+                            {isLoading
+                                ? Array.from({ length: 8 }, (_, i) => (
+                                    <div key={i} className="inv-item skeleton skeleton-item" />
+                                ))
+                                : inv.map((item) => {
+                                    const itemDef = manifestData?.[String(item.itemHash)]
+                                    const iconUrl = `https://www.bungie.net${itemDef?.displayProperties?.icon}`
+                                    const itemName = itemDef?.displayProperties?.name ?? String(item.itemHash)
+                                    return (
+                                        <div key={item.itemInstanceId} className={`inv-item${(item.state & 4) !== 0 ? ' inv-item-masterwork' : ''}`} onClick={() => setSelectedItem(item)}>
+                                            <img src={iconUrl} alt={itemName} />
+                                            {(() => {
+                                                const gearTier = itemInstances?.[item.itemInstanceId]?.gearTier
+                                                if (!gearTier) return null
+                                                return (
+                                                    <div className="inv-item-tier">
+                                                        {Array.from({ length: 5 }, (_, i) => (
+                                                            <span key={i} className={i < gearTier ? 'tier-pip tier-pip-filled' : 'tier-pip'}>◆</span>
+                                                        ))}
+                                                    </div>
+                                                )
+                                            })()}
+                                            {(() => {
+                                                const power = itemInstances?.[item.itemInstanceId]?.primaryStat?.value
+                                                if (!power) return null
+                                                return <span className="inv-item-power">{power}</span>
+                                            })()}
+                                            <div className="inv-item-tooltip">{itemName}</div>
+                                        </div>
+                                    )
+                                })
+                            }
                         </div>
                     </div>
                 ))}

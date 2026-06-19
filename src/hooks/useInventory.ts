@@ -54,10 +54,10 @@ export function useInventory(refreshKey?: number) {
                     setItemSockets(itemSockets)
                     setItemPlugObjectives(itemPlugObjectives)
                 }
-
-                setLoading(false)
             } catch {
                 setError("Error loading inventory")
+            } finally {
+                setLoading(false)
             }
         }
 

@@ -7,6 +7,7 @@ export function useTokenRefresh() {
 
     useEffect(() => {
         async function tryRefresh() {
+            useAuthStore.getState().initFromStorage()
             const { refreshToken, expiresAt } = useAuthStore.getState()
 
             if (!refreshToken) {

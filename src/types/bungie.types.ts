@@ -92,6 +92,10 @@ export interface DestinyItemDefinition {
     plug?: {
         plugCategoryIdentifier: string
     }
+    investmentStats?: Array<{
+        statTypeHash: number
+        value: number
+    }>
 }
 
 export const classNames: Record<number, string> = {

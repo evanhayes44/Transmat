@@ -18,10 +18,11 @@ Every item in the inventory and vault displays:
 
 ### Item Modal
 Click any item to open a detail modal showing:
-- Item icon, name, and flavor text
+- Item icon, name, and flavor text — if a cosmetic ornament is equipped, the icon updates to show the ornament's appearance automatically
 - All stats with bar visualizations
 - Socket perks with icon, name, and descriptions
 - Catalyst / intrinsic objectives with progress bars
+- **Masterwork badge** — weapons that have been masterworked display a `◆ MASTERWORKED: [Stat]` label identifying the masterworked stat
 - Character inventory slots showing where the item can be transferred — each slot item uses the same tier pip, masterwork, and power identifiers as the main inventory
 - Transfer and Equip buttons for each character, plus a Move to Vault option
 
@@ -47,10 +48,13 @@ Click any item to open a detail modal showing:
 - After authentication, automatically redirects to the inventory view
 - If already logged in, the login page redirects immediately to inventory
 
+### Live Inventory Updates
+The inventory automatically re-fetches every 30 seconds so new drops, transfers made from another device, and other in-game changes appear without a manual page refresh.
+
 ### Persistent Login
 - Access token is stored in `localStorage` and restored on page load
-- A background refresh runs every 30 minutes using the refresh token to silently re-authenticate
-- On startup, if the access token is expired but a refresh token exists, a refresh is attempted before rendering — so the user never sees a login flash
+- On startup, tokens are loaded from storage before the refresh check runs — if the access token has expired but the refresh token is still valid (up to 90 days), a silent refresh happens before the app renders so the user is never sent back to the login screen unexpectedly
+- A background refresh also runs every 30 minutes to proactively replace tokens before they expire
 - Logging out clears all stored tokens
 
 ## Security

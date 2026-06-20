@@ -85,13 +85,20 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
         })
         : undefined
 
-    const masterworkPlugName = masterworkSocket
-        ? (manifestData?.[String(masterworkSocket.plugHash)]?.displayProperties.name ?? '')
-        : ''
+    const masterworkPlugDef = masterworkSocket
+        ? manifestData?.[String(masterworkSocket.plugHash)]
+        : undefined
+
+    const masterworkPlugName = masterworkPlugDef?.displayProperties.name ?? ''
 
     const masterworkStat = masterworkPlugName && !masterworkPlugName.toLowerCase().includes('catalyst')
         ? masterworkPlugName.replace(/ masterwork$/i, '').trim()
         : null
+
+    const masterworkStats = masterworkPlugDef?.investmentStats
+        ?.filter(s => s.value > 0 && statNames[s.statTypeHash])
+        .map(s => ({ name: statNames[s.statTypeHash], value: s.value }))
+        ?? []
 
     const catalystSocket = (isExotic && itemDef.itemType === 3) ? visibleSockets.find(s => {
         const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
@@ -270,7 +277,23 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
 
                         {isMasterwork && itemDef.itemType === 3 && (
                             <div className={styles.masterworkBadge}>
-                                ◆ MASTERWORKED{masterworkStat ? `: ${masterworkStat}` : ''}
+                                <div className={styles.masterworkHeader}>
+                                    {masterworkPlugDef?.displayProperties.icon && (
+                                        <img
+                                            className={styles.masterworkIcon}
+                                            src={`https://www.bungie.net${masterworkPlugDef.displayProperties.icon}`}
+                                            alt="Masterwork"
+                                        />
+                                    )}
+                                    <span>◆ MASTERWORKED{masterworkStat ? `: ${masterworkStat.toUpperCase()}` : ''}</span>
+                                </div>
+                                {masterworkStats.length > 0 && (
+                                    <div className={styles.masterworkStats}>
+                                        {masterworkStats.map(({ name, value }) => (
+                                            <span key={name}>+{value} {name}</span>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
 

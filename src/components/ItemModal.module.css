@@ -137,14 +137,40 @@
 }
 
 .masterworkBadge {
+    padding: 6px 0 2px;
+    border-top: 1px solid rgba(240, 192, 64, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.masterworkHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-family: var(--mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #f0c040;
-    padding: 6px 0 2px;
-    border-top: 1px solid rgba(240, 192, 64, 0.25);
+}
+
+.masterworkIcon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.masterworkStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #f0c040;
+    opacity: 0.8;
+    padding-left: 32px;
 }
 
 .destinations {

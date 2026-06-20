@@ -111,17 +111,31 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
     })
 
     const ornamentIcon = (() => {
-        // First pass: visible sockets with 'ornament' in category (works for legendary weapons)
+        // Pass 1: visible sockets with 'ornament' in category — works for most legendary weapons
         for (const s of ornamentSockets) {
             const plugIcon = manifestData?.[String(s.plugHash)]?.displayProperties.icon
             if (plugIcon) return plugIcon
         }
-        // Second pass: all sockets — exotic ornament sockets are sometimes not marked isVisible
-        // Only accept an icon that differs from the base item icon (rules out default/empty plugs)
+        // Pass 2: all sockets (including non-visible) with 'ornament' in category
         for (const s of sockets?.sockets ?? []) {
             if (!s.plugHash) continue
             const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
             if (!cat.includes('ornament')) continue
+            const plugIcon = manifestData?.[String(s.plugHash)]?.displayProperties.icon
+            if (plugIcon && plugIcon !== icon) return plugIcon
+        }
+        // Pass 3: any visible socket not already classified as a perk or catalyst whose icon
+        // differs from the base icon — catches exotic ornaments with non-standard category names
+        const knownHashes = new Set([
+            ...perkSockets.map(s => s.plugHash),
+            ...(catalystSocket ? [catalystSocket.plugHash] : []),
+        ])
+        for (const s of visibleSockets) {
+            if (knownHashes.has(s.plugHash)) continue
+            const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
+            if (cat.includes('masterwork') || cat.includes('shader') || cat.includes('tracker')) continue
+            // Exclude barrel/magazine/general mods (have 'mod' but not 'ornament' or 'appearance')
+            if (cat.includes('mod') && !cat.includes('ornament') && !cat.includes('appearance')) continue
             const plugIcon = manifestData?.[String(s.plugHash)]?.displayProperties.icon
             if (plugIcon && plugIcon !== icon) return plugIcon
         }

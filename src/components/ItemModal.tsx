@@ -275,7 +275,7 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                             </div>
                         )}
 
-                        {isMasterwork && itemDef.itemType === 3 && (
+                        {isMasterwork && itemDef.itemType === 3 && masterworkStat && (
                             <div className={styles.masterworkBadge}>
                                 <div className={styles.masterworkHeader}>
                                     {masterworkPlugDef?.displayProperties.icon && (

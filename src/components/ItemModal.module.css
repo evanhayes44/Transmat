@@ -136,6 +136,17 @@
     gap: 4px;
 }
 
+.masterworkBadge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f0c040;
+    padding: 6px 0 2px;
+    border-top: 1px solid rgba(240, 192, 64, 0.25);
+}
+
 .destinations {
     flex-shrink: 0;
     display: flex;

@@ -77,6 +77,22 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
         return cat !== '' && !cat.includes('masterwork') && !cat.includes('shader') && !cat.includes('ornament') && !cat.includes('mod')
     })
 
+    const masterworkSocket = (isMasterwork && itemDef.itemType === 3)
+        ? (sockets?.sockets ?? []).find(s => {
+            if (!s.plugHash) return false
+            const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
+            return cat.includes('masterwork')
+        })
+        : undefined
+
+    const masterworkPlugName = masterworkSocket
+        ? (manifestData?.[String(masterworkSocket.plugHash)]?.displayProperties.name ?? '')
+        : ''
+
+    const masterworkStat = masterworkPlugName && !masterworkPlugName.toLowerCase().includes('catalyst')
+        ? masterworkPlugName.replace(/ masterwork$/i, '').trim()
+        : null
+
     const catalystSocket = (isExotic && itemDef.itemType === 3) ? visibleSockets.find(s => {
         const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
         return cat.includes('masterwork')
@@ -86,6 +102,12 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
         const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
         return cat.includes('ornament')
     })
+
+    const ornamentIcon = ornamentSockets[0]
+        ? manifestData?.[String(ornamentSockets[0].plugHash)]?.displayProperties.icon
+        : undefined
+
+    const displayIcon = ornamentIcon || icon
 
     let catalystStatus: string | null = null
     if (catalystSocket) {
@@ -153,7 +175,7 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
 
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
-                        {icon && <img className={styles.icon} src={`https://www.bungie.net${icon}`} alt={name} />}
+                        {displayIcon && <img className={styles.icon} src={`https://www.bungie.net${displayIcon}`} alt={name} />}
                         <div className={styles.title}>
                             <span className={`${styles.name}${isMasterwork ? ` ${styles.nameMasterwork}` : ''}`}>{name}</span>
                             {subTypeName && <span className={styles.type}>{subTypeName}</span>}
@@ -243,6 +265,12 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                         </div>
                                     )
                                 })}
+                            </div>
+                        )}
+
+                        {isMasterwork && itemDef.itemType === 3 && (
+                            <div className={styles.masterworkBadge}>
+                                ◆ MASTERWORKED{masterworkStat ? `: ${masterworkStat}` : ''}
                             </div>
                         )}
 

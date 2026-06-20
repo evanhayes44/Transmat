@@ -63,6 +63,9 @@ export function useInventory(refreshKey?: number) {
 
         loadInventory()
 
+        const interval = setInterval(loadInventory, 30_000)
+        return () => clearInterval(interval)
+
     }, [membershipType,
         destinyMembershipId,
         setItems,

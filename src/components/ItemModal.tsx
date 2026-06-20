@@ -285,7 +285,7 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
                                             alt="Masterwork"
                                         />
                                     )}
-                                    <span>◆ MASTERWORKED{masterworkStat ? `: ${masterworkStat.toUpperCase()}` : ''}</span>
+                                    <span>◆ {masterworkStat ? ` ${masterworkStat.toUpperCase()}` : ''}</span>
                                 </div>
                                 {masterworkStats.length > 0 && (
                                     <div className={styles.masterworkStats}>

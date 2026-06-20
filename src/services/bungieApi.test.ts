@@ -12,7 +12,7 @@ describe('bungieApi', () => {
 
     beforeEach(() => {
         mockFetch = vi.fn()
-        global.fetch = mockFetch
+        globalThis.fetch = mockFetch as unknown as typeof fetch
         vi.stubEnv('VITE_BUNGIE_API_KEY', 'test-api-key')
     })
 

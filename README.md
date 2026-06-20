@@ -70,6 +70,30 @@ This means even if the authorization code is intercepted, it cannot be exchanged
 ### CSRF Protection
 A random `state` parameter is generated and stored in `sessionStorage` before the redirect. The callback view verifies that the `state` returned by Bungie matches before proceeding. This prevents cross-site request forgery attacks on the OAuth flow.
 
+## Testing
+
+The project uses [Vitest](https://vitest.dev/) as the test runner and [@testing-library/react](https://testing-library.com/docs/react-testing-library/intro/) for component tests, with jsdom simulating the browser environment.
+
+### What's covered
+
+| File | What it tests |
+|---|---|
+| `src/services/auth.test.ts` | `saveTokens`, `loadTokensFromStorage`, `clearTokens` — localStorage read/write and expiry logic |
+| `src/services/bungieApi.test.ts` | `bungieGet` / `bungiePost` with a mocked `fetch` — correct URL construction, auth headers, JSON body serialisation, error throwing on non-ok responses; `transferItem` and `equipItem` payload shapes |
+| `src/store/authStore.test.ts` | `login`, `logout`, `setInitializing`, `initFromStorage` — state transitions and localStorage integration |
+| `src/store/inventoryStore.test.ts` | All setters (`setLoading`, `setError`, `setItems`, `setVaultItems`, `setCharacterInventory`) — state updates and null-clearing |
+| `src/components/auth/LoginButton.test.tsx` | Renders the label, calls `redirectToBungieLogin` on click, applies extra className prop |
+| `src/components/ItemModal.test.tsx` | Null-guard when `itemDef` is undefined, item name and sub-type rendering, power level, close button, backdrop click, Vault destination |
+| `src/views/HomeView.test.tsx` | Logo, tagline, login button, and logo symbol all render |
+| `src/views/InventoryView.test.tsx` | Page layout, Logout button calling `logout()`, sort dropdown, search input, Exotic/Masterwork filter toggles, Reset button clearing all filters, weapon type chips toggling, loading skeleton panels, character class name and power level, item modal open/close |
+
+### Running tests
+
+```bash
+npm test          # watch mode (re-runs on file save, for development)
+npm run test:run  # single run and exit (used in CI)
+```
+
 ## Tech Stack
 
 | Layer | Library |
@@ -88,7 +112,6 @@ A random `state` parameter is generated and stored in `sessionStorage` before th
 src/
 ├── components/
 │   ├── ItemModal.tsx          # Item detail modal with transfer/equip
-│   ├── ItemTooltip.tsx        # Reusable tooltip component
 │   └── auth/
 │       └── LoginButton.tsx    # Bungie OAuth login button
 ├── hooks/
@@ -154,10 +177,11 @@ Output is in the `dist/` directory.
 
 ### Continuous Integration (GitHub Actions)
 
-Every push to `main` and every pull request automatically runs a CI workflow defined in `.github/workflows/ci.yml`. It spins up a fresh Linux environment, installs dependencies, and runs:
+Every push to `master` and every pull request automatically runs a CI workflow defined in `.github/workflows/ci.yml`. It spins up a fresh Linux environment, installs dependencies, and runs:
 
 1. **Lint** — ESLint checks for code quality issues
-2. **Build** — TypeScript type checking + Vite production build
+2. **Test** — Vitest runs all 75+ tests across stores, services, and components
+3. **Build** — TypeScript type checking + Vite production build
 
 If either step fails, GitHub marks the commit with a red X and the failure is visible in the **Actions** tab of the repo. This catches broken code before it reaches the live site.
 
@@ -168,12 +192,12 @@ The build step requires your environment variables to be present. These are stor
 
 ### Continuous Deployment (Vercel)
 
-The app is hosted on [Vercel](https://vercel.com). Vercel watches the `main` branch and automatically deploys on every push — no manual steps required. Environment variables are configured separately in the Vercel dashboard so the production build has access to them at build time.
+The app is hosted on [Vercel](https://vercel.com). Vercel watches the `master` branch and automatically deploys on every push — no manual steps required. Environment variables are configured separately in the Vercel dashboard so the production build has access to them at build time.
 
-The full flow on every push to `main`:
+The full flow on every push to `master`:
 ```
-Push to main
-  → GitHub Actions runs lint + build (CI)
+Push to master
+  → GitHub Actions runs lint + tests + build (CI)
   → Vercel detects the push and deploys to production (CD)
   → Live site updates automatically
 ```

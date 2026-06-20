@@ -18,11 +18,11 @@ Every item in the inventory and vault displays:
 
 ### Item Modal
 Click any item to open a detail modal showing:
-- Item icon, name, and flavor text — if a cosmetic ornament is equipped, the icon updates to show the ornament's appearance automatically
+- Item icon, name, and flavor text — if a cosmetic ornament is equipped, the icon automatically updates to show the ornament's appearance
 - All stats with bar visualizations
 - Socket perks with icon, name, and descriptions
 - Catalyst / intrinsic objectives with progress bars
-- **Masterwork badge** — weapons that have been masterworked display a `◆ MASTERWORKED: [Stat]` label identifying the masterworked stat
+- **Masterwork badge** — masterworked weapons display the masterwork icon, the stat that was masterworked (e.g. `◆ BLAST RADIUS`), and all stat bonuses granted by the masterwork (e.g. `+3 Stability  +3 Handling`)
 - Character inventory slots showing where the item can be transferred — each slot item uses the same tier pip, masterwork, and power identifiers as the main inventory
 - Transfer and Equip buttons for each character, plus a Move to Vault option
 
@@ -49,7 +49,7 @@ Click any item to open a detail modal showing:
 - If already logged in, the login page redirects immediately to inventory
 
 ### Live Inventory Updates
-The inventory automatically re-fetches every 30 seconds so new drops, transfers made from another device, and other in-game changes appear without a manual page refresh.
+The inventory polls the Bungie API every 30 seconds in the background. New drops, loot from activities, transfers made from another device, and other in-game changes appear automatically without a manual page refresh. The interval is started when the inventory view mounts and cleaned up when it unmounts, so no requests are made when the page is not active.
 
 ### Persistent Login
 - Access token is stored in `localStorage` and restored on page load

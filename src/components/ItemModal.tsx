@@ -110,9 +110,23 @@ export function ItemModal({ item, itemDef, instance, stats, sockets, plugObjecti
         return cat.includes('ornament')
     })
 
-    const ornamentIcon = ornamentSockets[0]
-        ? manifestData?.[String(ornamentSockets[0].plugHash)]?.displayProperties.icon
-        : undefined
+    const ornamentIcon = (() => {
+        // First pass: visible sockets with 'ornament' in category (works for legendary weapons)
+        for (const s of ornamentSockets) {
+            const plugIcon = manifestData?.[String(s.plugHash)]?.displayProperties.icon
+            if (plugIcon) return plugIcon
+        }
+        // Second pass: all sockets — exotic ornament sockets are sometimes not marked isVisible
+        // Only accept an icon that differs from the base item icon (rules out default/empty plugs)
+        for (const s of sockets?.sockets ?? []) {
+            if (!s.plugHash) continue
+            const cat = manifestData?.[String(s.plugHash)]?.plug?.plugCategoryIdentifier ?? ''
+            if (!cat.includes('ornament')) continue
+            const plugIcon = manifestData?.[String(s.plugHash)]?.displayProperties.icon
+            if (plugIcon && plugIcon !== icon) return plugIcon
+        }
+        return undefined
+    })()
 
     const displayIcon = ornamentIcon || icon
 

@@ -1,262 +1,273 @@
 .backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    width: 750px;
-    max-height: calc(100vh - 40px);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  width: 750px;
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    background: var(--bg-panel);
-    z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
 }
 
 .headerLeft {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .icon {
-    width: 72px;
-    height: 72px;
-    flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
 }
 
 .title {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .name {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-bright);
-    line-height: 1.2;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.2;
 }
 
 .nameMasterwork {
-    color: #f0c040;
+  color: #f0c040;
 }
 
 .type {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text);
-    opacity: 0.7;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  opacity: 0.7;
 }
 
 .meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
 }
 
 .power {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
 }
 
 .element {
-    font-family: var(--mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .close {
-    background: none;
-    border: none;
-    color: var(--text);
-    font-size: 16px;
-    cursor: pointer;
-    padding: 4px 8px;
-    opacity: 0.6;
-    flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.6;
+  flex-shrink: 0;
 }
 
 .close:hover {
-    opacity: 1;
-    color: var(--text-bright);
+  opacity: 1;
+  color: var(--text-bright);
 }
 
 .body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .left {
-    flex: 1;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
-    scrollbar-width: none;
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .left::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .stats {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .masterworkBadge {
-    padding: 6px 0 2px;
-    border-top: 1px solid rgba(240, 192, 64, 0.25);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  padding: 6px 0 2px;
+  border-top: 1px solid rgba(240, 192, 64, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .masterworkHeader {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #f0c040;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f0c040;
 }
 
 .masterworkIcon {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .masterworkStats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 12px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: #f0c040;
-    opacity: 0.8;
-    padding-left: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #f0c040;
+  opacity: 0.8;
+  padding-left: 32px;
 }
 
 .destinations {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: row;
-    border-top: 1px solid var(--border);
-    padding: 10px 16px;
-    gap: 10px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  gap: 10px;
 }
 
 .destination {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
 .charEmblem {
-    width: 100%;
-    height: 24px;
-    object-fit: cover;
-    object-position: left center;
+  width: 100%;
+  height: 24px;
+  object-fit: cover;
+  object-position: left center;
 }
 
 .charName {
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text);
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
 }
 
 .slotGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
 }
 
 .slot {
-    aspect-ratio: 1;
-    border: 1px solid var(--border);
-    background: transparent;
-    position: relative;
-    overflow: hidden;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  background: transparent;
+  position: relative;
+  overflow: hidden;
 }
 
 .slotFilled {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .destinationActions {
-    display: flex;
-    gap: 4px;
-    margin-top: 2px;
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
 }
 
 .actionBtn {
-    flex: 1;
-    padding: 4px 0;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    cursor: pointer;
+  flex: 1;
+  padding: 4px 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
 }
 
 .actionBtn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.actionError {
+  margin: 8px 0 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #e05c5c;
+  text-align: center;
 }
 
 .vaultEmblem {
-    width: 100%;
-    height: 24px;
-    background: linear-gradient(to right, #1a2a3a, #0a1020);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: var(--accent);
+  width: 100%;
+  height: 24px;
+  background: linear-gradient(to right, #1a2a3a, #0a1020);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--accent);
 }

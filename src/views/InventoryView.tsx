@@ -14,7 +14,7 @@ import {
   championFrames,
 } from "../types/bungie.types";
 import type { DestinyItem } from "../types/bungie.types";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "./InventoryView.module.css";
 
 export function InventoryView() {
@@ -55,130 +55,112 @@ export function InventoryView() {
 
   useInventory(refreshKey);
 
-  function applyFilters(arr: DestinyItem[] | null) {
-    if (!arr) return [];
-    let result = [...arr];
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter((item) =>
-        manifestData?.[String(item.itemHash)]?.displayProperties?.name
-          ?.toLowerCase()
-          .includes(q),
-      );
-    }
-    if (filterMasterwork)
-      result = result.filter((item) => (item.state & 4) !== 0);
-    if (filterExotic)
-      result = result.filter(
-        (item) =>
-          manifestData?.[String(item.itemHash)]?.inventory?.tierType === 6,
-      );
-
-    if (filterWeaponType !== null)
-      result = result.filter(
-        (item) =>
-          manifestData?.[String(item.itemHash)]?.itemSubType ===
-          filterWeaponType,
-      );
-    if (filterElement !== null)
-      result = result.filter(
-        (item) =>
-          (itemInstances?.[item.itemInstanceId]?.damageType ?? 0) ===
-          filterElement,
-      );
-
-    if (filterChampion) {
-      const frames = championFrames[filterChampion] ?? [];
-      result = result.filter((item) => {
-        const sockets = itemSockets?.[item.itemInstanceId]?.sockets ?? [];
-        return sockets.some((s) => {
-          if (!s.isVisible || !s.plugHash) return false;
-          const plugName =
-            manifestData?.[String(s.plugHash)]?.displayProperties.name ?? "";
-          return frames.includes(plugName);
+  const {
+    vaultKinetic,
+    vaultEnergy,
+    vaultPower,
+    vaultHelmet,
+    vaultGauntlets,
+    vaultChest,
+    vaultLegs,
+    vaultClassItem,
+  } = useMemo(() => {
+    function applyFilters(arr: DestinyItem[]) {
+      let result = [...arr];
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        result = result.filter((item) =>
+          manifestData?.[String(item.itemHash)]?.displayProperties?.name
+            ?.toLowerCase()
+            .includes(q),
+        );
+      }
+      if (filterMasterwork)
+        result = result.filter((item) => (item.state & 4) !== 0);
+      if (filterExotic)
+        result = result.filter(
+          (item) =>
+            manifestData?.[String(item.itemHash)]?.inventory?.tierType === 6,
+        );
+      if (filterWeaponType !== null)
+        result = result.filter(
+          (item) =>
+            manifestData?.[String(item.itemHash)]?.itemSubType ===
+            filterWeaponType,
+        );
+      if (filterElement !== null)
+        result = result.filter(
+          (item) =>
+            (itemInstances?.[item.itemInstanceId]?.damageType ?? 0) ===
+            filterElement,
+        );
+      if (filterChampion) {
+        const frames = championFrames[filterChampion] ?? [];
+        result = result.filter((item) => {
+          const sockets = itemSockets?.[item.itemInstanceId]?.sockets ?? [];
+          return sockets.some((s) => {
+            if (!s.isVisible || !s.plugHash) return false;
+            const plugName =
+              manifestData?.[String(s.plugHash)]?.displayProperties.name ?? "";
+            return frames.includes(plugName);
+          });
         });
-      });
+      }
+      if (sortBy === "power-desc")
+        result.sort(
+          (a, b) =>
+            (itemInstances?.[b.itemInstanceId]?.primaryStat?.value ?? 0) -
+            (itemInstances?.[a.itemInstanceId]?.primaryStat?.value ?? 0),
+        );
+      else if (sortBy === "power-asc")
+        result.sort(
+          (a, b) =>
+            (itemInstances?.[a.itemInstanceId]?.primaryStat?.value ?? 0) -
+            (itemInstances?.[b.itemInstanceId]?.primaryStat?.value ?? 0),
+        );
+      else
+        result.sort((a, b) =>
+          (
+            manifestData?.[String(a.itemHash)]?.displayProperties?.name ?? ""
+          ).localeCompare(
+            manifestData?.[String(b.itemHash)]?.displayProperties?.name ?? "",
+          ),
+        );
+      return result;
     }
 
-    if (sortBy === "power-desc")
-      result.sort(
-        (a, b) =>
-          (itemInstances?.[b.itemInstanceId]?.primaryStat?.value ?? 0) -
-          (itemInstances?.[a.itemInstanceId]?.primaryStat?.value ?? 0),
+    const byBucket = (hash: number) =>
+      applyFilters(
+        vaultItems?.filter(
+          (item) =>
+            manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
+            hash,
+        ) ?? [],
       );
-    else if (sortBy === "power-asc")
-      result.sort(
-        (a, b) =>
-          (itemInstances?.[a.itemInstanceId]?.primaryStat?.value ?? 0) -
-          (itemInstances?.[b.itemInstanceId]?.primaryStat?.value ?? 0),
-      );
-    else
-      result.sort((a, b) =>
-        (
-          manifestData?.[String(a.itemHash)]?.displayProperties?.name ?? ""
-        ).localeCompare(
-          manifestData?.[String(b.itemHash)]?.displayProperties?.name ?? "",
-        ),
-      );
-    return result;
-  }
 
-  const vaultKinetic = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.kinetic,
-    ) ?? [],
-  );
-  const vaultEnergy = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.energy,
-    ) ?? [],
-  );
-  const vaultPower = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.power,
-    ) ?? [],
-  );
-  const vaultHelmet = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.helmet,
-    ) ?? [],
-  );
-  const vaultGauntlets = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.gauntlets,
-    ) ?? [],
-  );
-  const vaultChest = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.chest,
-    ) ?? [],
-  );
-  const vaultLegs = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.legs,
-    ) ?? [],
-  );
-  const vaultClassItem = applyFilters(
-    vaultItems?.filter(
-      (item) =>
-        manifestData?.[String(item.itemHash)]?.inventory?.bucketTypeHash ===
-        bucketHashes.classItem,
-    ) ?? [],
-  );
+    return {
+      vaultKinetic: byBucket(bucketHashes.kinetic),
+      vaultEnergy: byBucket(bucketHashes.energy),
+      vaultPower: byBucket(bucketHashes.power),
+      vaultHelmet: byBucket(bucketHashes.helmet),
+      vaultGauntlets: byBucket(bucketHashes.gauntlets),
+      vaultChest: byBucket(bucketHashes.chest),
+      vaultLegs: byBucket(bucketHashes.legs),
+      vaultClassItem: byBucket(bucketHashes.classItem),
+    };
+  }, [
+    vaultItems,
+    manifestData,
+    itemInstances,
+    itemSockets,
+    sortBy,
+    filterMasterwork,
+    filterExotic,
+    filterWeaponType,
+    filterElement,
+    filterChampion,
+    searchQuery,
+  ]);
 
   const vaultMisc =
     vaultItems?.filter(
